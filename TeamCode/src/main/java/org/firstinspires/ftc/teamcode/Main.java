@@ -15,26 +15,26 @@ public class Main extends LinearOpMode {
    */
   @Override
   public void runOpMode() {
-    DcMotor right_front = hardwareMap.get(DcMotor.class, "right front");
-    DcMotor left_front = hardwareMap.get(DcMotor.class, "left front");
-    DcMotor right_rear = hardwareMap.get(DcMotor.class, "right rear");
-    DcMotor left_rear = hardwareMap.get(DcMotor.class, "left rear");
+    DcMotor rightFront = hardwareMap.get(DcMotor.class, "right front");
+    DcMotor leftFront = hardwareMap.get(DcMotor.class, "left front");
+    DcMotor rightRear = hardwareMap.get(DcMotor.class, "right rear");
+    DcMotor leftRear = hardwareMap.get(DcMotor.class, "left rear");
     Servo left = hardwareMap.get(Servo.class, "left");
     Servo right = hardwareMap.get(Servo.class, "right");
     DcMotor arm1 = hardwareMap.get(DcMotor.class, "arm1");
     DcMotor arm2 = hardwareMap.get(DcMotor.class, "arm2");
 
     // Reverse the right side.
-    right_front.setDirection(DcMotorSimple.Direction.FORWARD);
-    left_front.setDirection(DcMotorSimple.Direction.REVERSE);
-    right_rear.setDirection(DcMotorSimple.Direction.REVERSE);
-    left_rear.setDirection(DcMotorSimple.Direction.REVERSE);
+    rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
+    leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+    rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
+    leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
     // This makes the robot BRAKE when power becomes zero. The other
     // mode, FLOAT, makes the robot go in neutral and will drift.
-    right_front.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    left_front.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    right_rear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    left_rear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     waitForStart();
     if (opModeIsActive()) {
       // Put run blocks here.
@@ -47,60 +47,60 @@ public class Main extends LinearOpMode {
           right.setPosition(0);
         }
         if (gamepad1.left_stick_y > 0.5 && gamepad1.left_stick_x > 0.5) {
-          right_front.setPower(0);
-          left_front.setPower(0.75);
-          right_rear.setPower(0.75);
-          left_rear.setPower(0);
+          rightFront.setPower(0);
+          leftFront.setPower(0.75);
+          rightRear.setPower(0.75);
+          leftRear.setPower(0);
         } else if (gamepad1.left_stick_y > 0.5 && gamepad1.left_stick_x < -0.5) {
-          right_front.setPower(0.75);
-          left_front.setPower(0);
-          right_rear.setPower(0);
-          left_rear.setPower(0.75);
+          rightFront.setPower(0.75);
+          leftFront.setPower(0);
+          rightRear.setPower(0);
+          leftRear.setPower(0.75);
         } else if (gamepad1.left_stick_y < -0.5 && gamepad1.left_stick_x < -0.5) {
-          right_front.setPower(0);
-          left_front.setPower(-0.75);
-          right_rear.setPower(-0.75);
-          left_rear.setPower(0);
+          rightFront.setPower(0);
+          leftFront.setPower(-0.75);
+          rightRear.setPower(-0.75);
+          leftRear.setPower(0);
         } else if (gamepad1.left_stick_y < -0.5 && gamepad1.left_stick_x > 0.5) {
-          right_front.setPower(-0.75);
-          left_front.setPower(0);
-          right_rear.setPower(0);
-          left_rear.setPower(-0.75);
+          rightFront.setPower(-0.75);
+          leftFront.setPower(0);
+          rightRear.setPower(0);
+          leftRear.setPower(-0.75);
         } else if (gamepad1.left_stick_y > 0.5) {
-          right_front.setPower(-0.75);
-          left_front.setPower(-0.75);
-          right_rear.setPower(-0.75);
-          left_rear.setPower(-0.75);
+          rightFront.setPower(-0.75);
+          leftFront.setPower(-0.75);
+          rightRear.setPower(-0.75);
+          leftRear.setPower(-0.75);
         } else if (gamepad1.left_stick_y < -0.5) {
-          right_front.setPower(0.75);
-          left_front.setPower(0.75);
-          right_rear.setPower(0.75);
-          left_rear.setPower(0.75);
+          rightFront.setPower(0.75);
+          leftFront.setPower(0.75);
+          rightRear.setPower(0.75);
+          leftRear.setPower(0.75);
         } else if (gamepad1.left_stick_x > 0.5) {
-          right_front.setPower(-0.75);
-          left_front.setPower(0.75);
-          right_rear.setPower(0.75);
-          left_rear.setPower(-0.75);
+          rightFront.setPower(-0.75);
+          leftFront.setPower(0.75);
+          rightRear.setPower(0.75);
+          leftRear.setPower(-0.75);
         } else if (gamepad1.left_stick_x < -0.5) {
-          right_front.setPower(0.75);
-          left_front.setPower(-0.75);
-          right_rear.setPower(-0.75);
-          left_rear.setPower(0.75);
+          rightFront.setPower(0.75);
+          leftFront.setPower(-0.75);
+          rightRear.setPower(-0.75);
+          leftRear.setPower(0.75);
         } else if (gamepad1.right_bumper) {
-          right_front.setPower(0.75);
-          left_front.setPower(-0.75);
-          right_rear.setPower(0.75);
-          left_rear.setPower(-0.75);
+          rightFront.setPower(0.75);
+          leftFront.setPower(-0.75);
+          rightRear.setPower(0.75);
+          leftRear.setPower(-0.75);
         } else if (gamepad1.left_bumper) {
-          right_front.setPower(-0.75);
-          left_front.setPower(0.75);
-          right_rear.setPower(-0.75);
-          left_rear.setPower(0.75);
+          rightFront.setPower(-0.75);
+          leftFront.setPower(0.75);
+          rightRear.setPower(-0.75);
+          leftRear.setPower(0.75);
         } else {
-          right_front.setPower(0);
-          left_front.setPower(0);
-          right_rear.setPower(0);
-          left_rear.setPower(0);
+          rightFront.setPower(0);
+          leftFront.setPower(0);
+          rightRear.setPower(0);
+          leftRear.setPower(0);
         }
         if (gamepad2.right_trigger > 0.1) {
           arm1.setPower(gamepad2.right_trigger);
