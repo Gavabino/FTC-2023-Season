@@ -50,7 +50,6 @@ import java.util.Locale;
 public class Auto extends LinearOpMode
 {
     //INTRODUCE VARIABLES HERE
-    SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
@@ -76,9 +75,7 @@ public class Auto extends LinearOpMode
     int RIGHT = 3;
 
     AprilTagDetection tagOfInterest = null;
-     Trajectory middle = drive.trajectoryBuilder(new Pose2d())
-             .forward(5)
-             .build();
+
     @Override
     public void runOpMode()
     {
@@ -106,7 +103,11 @@ public class Auto extends LinearOpMode
 
 
         //HARDWARE MAPPING HERE etc.
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
+        Trajectory middle = drive.trajectoryBuilder(new Pose2d())
+                .forward(5)
+                .build();
         /*
          * The INIT-loop:
          * This REPLACES waitForStart!
@@ -191,6 +192,7 @@ public class Auto extends LinearOpMode
 
         if(tagOfInterest == null){
             //default path
+            drive.followTrajectory(middle);
         }else{
             switch(tagOfInterest.id){
                 case 1:
