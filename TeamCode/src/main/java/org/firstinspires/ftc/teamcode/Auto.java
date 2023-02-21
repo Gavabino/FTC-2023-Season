@@ -106,8 +106,6 @@ public class Auto extends LinearOpMode
 
 
         //HARDWARE MAPPING HERE etc.
-        DcMotor arm1 = hardwareMap.get(DcMotor.class, "arm1");
-        DcMotor arm2 = hardwareMap.get(DcMotor.class, "arm2");
 
         /*
          * The INIT-loop:
