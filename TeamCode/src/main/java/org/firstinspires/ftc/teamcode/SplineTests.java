@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 /*
  * This is an example of a more complex path to really test the tuning.
@@ -21,17 +22,14 @@ public class SplineTests extends LinearOpMode {
 
         if (isStopRequested()) return;
 
-        Trajectory traj = drive.trajectoryBuilder(new Pose2d())
-                .splineTo(new Vector2d(30, 30), 0)
+        TrajectorySequence traj = drive.trajectorySequenceBuilder(new Pose2d(-36.11, -61.55, Math.toRadians(90.00)))
+                .splineTo(new Vector2d(-38.16, -41.11), Math.toRadians(70.94))
+                .splineTo(new Vector2d(0.23, -27.26), Math.toRadians(90.01))
+                .splineTo(new Vector2d(-0.68, -38.84), Math.toRadians(265.52))
+                .splineTo(new Vector2d(-14.99, -41.79), Math.toRadians(191.66))
+                .splineTo(new Vector2d(-35.66, -36.11), Math.toRadians(164.64))
                 .build();
 
-        drive.followTrajectory(traj);
-        sleep(2000);
-
-        drive.followTrajectory(
-                drive.trajectoryBuilder(traj.end(), true)
-                        .splineTo(new Vector2d(0, 0), Math.toRadians(180))
-                        .build()
-        );
+        drive.followTrajectorySequence(traj);
     }
 }
