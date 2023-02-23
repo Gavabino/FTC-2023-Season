@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 @Autonomous
+@Config
 public class Auto extends LinearOpMode
 {
     //INTRODUCE VARIABLES HERE
@@ -105,8 +106,17 @@ public class Auto extends LinearOpMode
         //HARDWARE MAPPING HERE etc.
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
+        Trajectory forward = drive.trajectoryBuilder(new Pose2d())
+                .forward(2.8)
+                .build();
         Trajectory middle = drive.trajectoryBuilder(new Pose2d())
                 .forward(5)
+                .build();
+        Trajectory left = drive.trajectoryBuilder(new Pose2d())
+                .strafeLeft(3.2)
+                .build();
+        Trajectory right = drive.trajectoryBuilder(new Pose2d())
+                .strafeRight(3.2)
                 .build();
         /*
          * The INIT-loop:
@@ -196,11 +206,15 @@ public class Auto extends LinearOpMode
         }else{
             switch(tagOfInterest.id){
                 case 1:
+                    drive.followTrajectory(forward);
+                    drive.followTrajectory(left);
                     break;
                 case 2:
                     drive.followTrajectory(middle);
                     break;
                 case 3:
+                    drive.followTrajectory(forward);
+                    drive.followTrajectory(right);
                     break;
             }
         }
