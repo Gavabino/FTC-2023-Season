@@ -47,7 +47,6 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 @Autonomous
-@Config
 public class Auto extends LinearOpMode
 {
     //INTRODUCE VARIABLES HERE
@@ -69,7 +68,6 @@ public class Auto extends LinearOpMode
     double tagsize = 0.166;
 
     // Tag ID 1,2,3 from the 36h11 family
-    /*EDIT IF NEEDED!!!*/
 
     int LEFT = 1;
     int MIDDLE = 2;
