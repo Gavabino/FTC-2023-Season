@@ -15,10 +15,10 @@ public class Main extends LinearOpMode {
    */
   @Override
   public void runOpMode() {
-    DcMotor rightFront = hardwareMap.get(DcMotor.class, "right front");
-    DcMotor leftFront = hardwareMap.get(DcMotor.class, "left front");
-    DcMotor rightRear = hardwareMap.get(DcMotor.class, "right rear");
-    DcMotor leftRear = hardwareMap.get(DcMotor.class, "left rear");
+    DcMotor rightFront = hardwareMap.get(DcMotor.class, "rightFront");
+    DcMotor leftFront = hardwareMap.get(DcMotor.class, "leftFront");
+    DcMotor rightRear = hardwareMap.get(DcMotor.class, "rightRear");
+    DcMotor leftRear = hardwareMap.get(DcMotor.class, "leftRear");
     Servo left = hardwareMap.get(Servo.class, "left");
     Servo right = hardwareMap.get(Servo.class, "right");
     DcMotor arm1 = hardwareMap.get(DcMotor.class, "arm1");
@@ -29,6 +29,7 @@ public class Main extends LinearOpMode {
     leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
     rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
     leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
+    arm1.setDirection(DcMotorSimple.Direction.REVERSE);
     // This makes the robot BRAKE when power becomes zero. The other
     // mode, FLOAT, makes the robot go in neutral and will drift.
     rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -39,6 +40,8 @@ public class Main extends LinearOpMode {
     if (opModeIsActive()) {
       // Put run blocks here.
       while (opModeIsActive()) {
+        telemetry.addLine(String.format("\nArm 1 Position: %d", arm1.getCurrentPosition()));
+        telemetry.addLine(String.format("\nArm 2 Position: %d", arm2.getCurrentPosition()));
         if (gamepad2.x) {
           left.setPosition(0);
           right.setPosition(0.4);
