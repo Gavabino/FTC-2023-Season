@@ -1,49 +1,21 @@
-/*
- * Copyright (c) 2021 OpenFTC Team
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
-
 package org.firstinspires.ftc.teamcode;
-//Java
+
 import android.annotation.SuppressLint;
-import java.util.ArrayList;
-import java.util.Locale;
-//Roadrunner
-import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
-//AI
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCamera.AsyncCameraOpenListener;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-//REV
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+
+import java.util.ArrayList;
 
 @Autonomous
 public class Auto extends LinearOpMode
@@ -64,7 +36,7 @@ public class Auto extends LinearOpMode
     double cy = 221.506;
 
     // UNITS ARE METERS
-    double tagsize = 0.166;
+    double tag_size = 0.166;
 
     // Tag ID 1,2,3 from the 36h11 family
 
@@ -72,164 +44,152 @@ public class Auto extends LinearOpMode
     int MIDDLE = 2;
     int RIGHT = 3;
 
-    AprilTagDetection tagOfInterest = null;
+    AprilTagDetection tagOfInterest;
 
     @Override
     public void runOpMode()
     {
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
+        @SuppressLint("DiscouragedApi") final int cameraMonitorViewId = this.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", this.hardwareMap.appContext.getPackageName());
+        this.camera = OpenCvCameraFactory.getInstance().createWebcam(this.hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        this.aprilTagDetectionPipeline = new AprilTagDetectionPipeline(this.tag_size, this.fx, this.fy, this.cx, this.cy);
 
-        camera.setPipeline(aprilTagDetectionPipeline);
-        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        this.camera.setPipeline(this.aprilTagDetectionPipeline);
+        this.camera.openCameraDeviceAsync(new AsyncCameraOpenListener()
         {
             @Override
             public void onOpened()
             {
-                camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
+                Auto.this.camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
-            public void onError(int errorCode)
+            public void onError(final int errorCode)
             {
 
             }
         });
 
-        telemetry.setMsTransmissionInterval(50);
+        this.telemetry.setMsTransmissionInterval(50);
 
 
         //HARDWARE MAPPING HERE etc.
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        final SampleMecanumDrive drive = new SampleMecanumDrive(this.hardwareMap);
 
-        Trajectory forward = drive.trajectoryBuilder(new Pose2d())
+        final Trajectory forward = drive.trajectoryBuilder(new Pose2d())
                 .forward(2.8)
                 .build();
-        Trajectory middle = drive.trajectoryBuilder(new Pose2d())
+        final Trajectory middle = drive.trajectoryBuilder(new Pose2d())
                 .forward(5)
                 .build();
-        Trajectory left = drive.trajectoryBuilder(new Pose2d())
+        final Trajectory left = drive.trajectoryBuilder(new Pose2d())
                 .strafeLeft(3.2)
                 .build();
-        Trajectory right = drive.trajectoryBuilder(new Pose2d())
+        final Trajectory right = drive.trajectoryBuilder(new Pose2d())
                 .strafeRight(3.2)
                 .build();
         /*
          * The INIT-loop:
          * This REPLACES waitForStart!
          */
-        while (!isStarted() && !isStopRequested())
+        while (!this.isStarted() && !this.isStopRequested())
         {
-            ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
+            final ArrayList<AprilTagDetection> currentDetections = this.aprilTagDetectionPipeline.getLatestDetections();
 
             if(currentDetections.size() != 0)
             {
                 boolean tagFound = false;
 
-                for(AprilTagDetection tag : currentDetections)
-                {
-                    if(tag.id == LEFT || tag.id == MIDDLE || tag.id == RIGHT)
-                    {
-                        tagOfInterest = tag;
+                for(final AprilTagDetection tag : currentDetections)
+                    if (tag.id == this.LEFT || tag.id == this.MIDDLE || tag.id == this.RIGHT) {
+                        this.tagOfInterest = tag;
                         tagFound = true;
                         break;
                     }
-                }
 
                 if(tagFound)
                 {
-                    telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
-                    tagToTelemetry(tagOfInterest);
+                    this.telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
+                    this.tagToTelemetry(this.tagOfInterest);
                 }
                 else
                 {
-                    telemetry.addLine("Don't see tag of interest :(");
+                    this.telemetry.addLine("Don't see tag of interest :(");
 
-                    if(tagOfInterest == null)
-                    {
-                        telemetry.addLine("(The tag has never been seen)");
-                    }
+                    if(this.tagOfInterest == null)
+                        this.telemetry.addLine("(The tag has never been seen)");
                     else
                     {
-                        telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
-                        tagToTelemetry(tagOfInterest);
+                        this.telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
+                        this.tagToTelemetry(this.tagOfInterest);
                     }
                 }
 
             }
             else
             {
-                telemetry.addLine("Don't see tag of interest :(");
+                this.telemetry.addLine("Don't see tag of interest :(");
 
-                if(tagOfInterest == null)
-                {
-                    telemetry.addLine("(The tag has never been seen)");
-                }
+                if(this.tagOfInterest == null)
+                    this.telemetry.addLine("(The tag has never been seen)");
                 else
                 {
-                    telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
-                    tagToTelemetry(tagOfInterest);
+                    this.telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
+                    this.tagToTelemetry(this.tagOfInterest);
                 }
 
             }
 
-            telemetry.update();
-            sleep(20);
+            this.telemetry.update();
+            this.sleep(20);
         }
 
 
 
 
 
-        if(tagOfInterest != null)
+        if(this.tagOfInterest != null)
         {
-            telemetry.addLine("Tag snapshot:\n");
-            tagToTelemetry(tagOfInterest);
-            telemetry.update();
+            this.telemetry.addLine("Tag snapshot:\n");
+            this.tagToTelemetry(this.tagOfInterest);
+            this.telemetry.update();
         }
         else
         {
-            telemetry.addLine("No tag snapshot available, it was never sighted during the init loop :(");
-            telemetry.update();
+            this.telemetry.addLine("No tag snapshot available, it was never sighted during the init loop :(");
+            this.telemetry.update();
         }
 
-        //PUT AUTON CODE HERE (DRIVER PRESSED THE PLAY BUTTON!)
+        //PUT AUTO CODE HERE (DRIVER PRESSED THE PLAY BUTTON!)
 
 
-        if(tagOfInterest == null){
-            //default path
-            drive.followTrajectory(middle);
-        }else{
-            switch(tagOfInterest.id){
-                case 1:
-                    drive.followTrajectory(forward);
-                    drive.followTrajectory(left);
-                    break;
-                case 2:
-                    drive.followTrajectory(middle);
-                    break;
-                case 3:
-                    drive.followTrajectory(forward);
-                    drive.followTrajectory(right);
-                    break;
-            }
+        //default path
+        if(this.tagOfInterest == null) drive.followTrajectory(middle);
+        else switch (this.tagOfInterest.id) {
+            case 1:
+                drive.followTrajectory(forward);
+                drive.followTrajectory(left);
+                break;
+            case 2:
+                drive.followTrajectory(middle);
+                break;
+            case 3:
+                drive.followTrajectory(forward);
+                drive.followTrajectory(right);
+                break;
         }
 
 
 
     }
 
-
-    @SuppressLint("DefaultLocale")
-    void tagToTelemetry(AprilTagDetection detection)
+    void tagToTelemetry(final AprilTagDetection detection)
     {
-        telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
-        telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));
-        telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y*FEET_PER_METER));
-        telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z*FEET_PER_METER));
-        telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
-        telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
-        telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
+        this.telemetry.addData("Detected tag ID: ", detection.id);
+        this.telemetry.addData("Translation X: ", detection.pose.x* Auto.FEET_PER_METER);
+        this.telemetry.addData("Translation Y: ", detection.pose.y* Auto.FEET_PER_METER);
+        this.telemetry.addData("Translation Z: ", detection.pose.z* Auto.FEET_PER_METER);
+        this.telemetry.addData("Rotation Yaw: ", Math.toDegrees(detection.pose.yaw));
+        this.telemetry.addData("Rotation Pitch: ", Math.toDegrees(detection.pose.pitch));
+        this.telemetry.addData("Rotation Roll: ", Math.toDegrees(detection.pose.roll));
     }
 }
