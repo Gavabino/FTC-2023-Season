@@ -22,6 +22,14 @@ public class Main2 extends LinearOpMode {
   public void runOpMode() {
     FtcDashboard dashboard = FtcDashboard.getInstance();
     Telemetry telemetry = new MultipleTelemetry(this.telemetry, dashboard.getTelemetry());
+    DcMotor rightFront = hardwareMap.get(DcMotor.class, "rightFront");
+    DcMotor leftFront = hardwareMap.get(DcMotor.class, "leftFront");
+    DcMotor rightRear = hardwareMap.get(DcMotor.class, "rightRear");
+    DcMotor leftRear = hardwareMap.get(DcMotor.class, "leftRear");
+    rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
+    leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+    rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
+    leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
     SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
     Servo left = hardwareMap.get(Servo.class, "left");
     Servo right = hardwareMap.get(Servo.class, "right");
@@ -43,6 +51,18 @@ public class Main2 extends LinearOpMode {
           left.setPosition(0.4);
           right.setPosition(0);
         }
+      if (gamepad1.right_bumper) {
+        rightFront.setPower(1);
+        leftFront.setPower(-1);
+        rightRear.setPower(1);
+        leftRear.setPower(-1);
+      }
+      if (gamepad1.left_bumper) {
+        rightFront.setPower(-1);
+        leftFront.setPower(1);
+        rightRear.setPower(-1);
+        leftRear.setPower(1);
+      }
         drive.setWeightedDrivePower(
                 new Pose2d(
                         -gamepad1.left_stick_y,

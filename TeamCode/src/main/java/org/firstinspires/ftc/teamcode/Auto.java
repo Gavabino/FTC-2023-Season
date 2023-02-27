@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import android.annotation.SuppressLint;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -18,10 +19,12 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 
 @Autonomous
+@Config
 public class Auto extends LinearOpMode
 {
     //INTRODUCE VARIABLES HERE
     OpenCvCamera camera;
+    public static double lt = 0.1;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
     static final double FEET_PER_METER = 3.28084;
@@ -86,6 +89,15 @@ public class Auto extends LinearOpMode
                 .build();
         final Trajectory right = drive.trajectoryBuilder(new Pose2d())
                 .strafeRight(3.2)
+                .build();
+        final Trajectory to_pole1 = drive.trajectoryBuilder(new Pose2d())
+                .forward(1.5)
+                .build();
+        final Trajectory to_pole2 = drive.trajectoryBuilder(to_pole1.end())
+                .strafeRight(0.6)
+                .build();
+        Trajectory start = drive.trajectoryBuilder(new Pose2d())
+                .strafeLeft(lt)
                 .build();
         /*
          * The INIT-loop:
@@ -160,13 +172,17 @@ public class Auto extends LinearOpMode
         }
 
         //PUT AUTO CODE HERE (DRIVER PRESSED THE PLAY BUTTON!)
-
-
+        drive.followTrajectory(start);
+        sleep(10);
         //default path
-        if(this.tagOfInterest == null) drive.followTrajectory(middle);
-        else switch (this.tagOfInterest.id) {
+        if(this.tagOfInterest == null) {
+            drive.followTrajectory(to_pole1);
+            sleep(10);
+            drive.followTrajectory(to_pole2);
+        }else switch (this.tagOfInterest.id) {
             case 1:
                 drive.followTrajectory(forward);
+                sleep(10);
                 drive.followTrajectory(left);
                 break;
             case 2:
@@ -174,6 +190,7 @@ public class Auto extends LinearOpMode
                 break;
             case 3:
                 drive.followTrajectory(forward);
+                sleep(10);
                 drive.followTrajectory(right);
                 break;
         }
