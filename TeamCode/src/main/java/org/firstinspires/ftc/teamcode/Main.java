@@ -26,8 +26,8 @@ public class Main extends LinearOpMode {
 
     // Reverse the right side.
     rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
-    leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-    rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
+    leftFront.setDirection(DcMotorSimple.Direction.FORWARD);
+    rightRear.setDirection(DcMotorSimple.Direction.FORWARD);
     leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
     arm1.setDirection(DcMotorSimple.Direction.REVERSE);
     // This makes the robot BRAKE when power becomes zero. The other
@@ -50,25 +50,25 @@ public class Main extends LinearOpMode {
           right.setPosition(0);
         }
         if (gamepad1.left_stick_y > 0.5 && gamepad1.left_stick_x > 0.5) {
-          rightFront.setPower(0);
-          leftFront.setPower(0.75);
-          rightRear.setPower(0.75);
-          leftRear.setPower(0);
-        } else if (gamepad1.left_stick_y > 0.5 && gamepad1.left_stick_x < -0.5) {
-          rightFront.setPower(0.75);
-          leftFront.setPower(0);
-          rightRear.setPower(0);
-          leftRear.setPower(0.75);
-        } else if (gamepad1.left_stick_y < -0.5 && gamepad1.left_stick_x < -0.5) {
-          rightFront.setPower(0);
-          leftFront.setPower(-0.75);
-          rightRear.setPower(-0.75);
-          leftRear.setPower(0);
-        } else if (gamepad1.left_stick_y < -0.5 && gamepad1.left_stick_x > 0.5) {
           rightFront.setPower(-0.75);
           leftFront.setPower(0);
           rightRear.setPower(0);
           leftRear.setPower(-0.75);
+        } else if (gamepad1.left_stick_y > 0.5 && gamepad1.left_stick_x < -0.5) {
+          rightFront.setPower(0);
+          leftFront.setPower(-0.75);
+          rightRear.setPower(-0.75);
+          leftRear.setPower(0);
+        } else if (gamepad1.left_stick_y < -0.5 && gamepad1.left_stick_x < -0.5) {
+          rightFront.setPower(0.75);
+          leftFront.setPower(0);
+          rightRear.setPower(0);
+          leftRear.setPower(0.75);
+        } else if (gamepad1.left_stick_y < -0.5 && gamepad1.left_stick_x > 0.5) {
+          rightFront.setPower(0);
+          leftFront.setPower(0.75);
+          rightRear.setPower(0.75);
+          leftRear.setPower(0);
         } else if (gamepad1.left_stick_y > 0.5) {
           rightFront.setPower(-0.75);
           leftFront.setPower(-0.75);
@@ -104,6 +104,17 @@ public class Main extends LinearOpMode {
           leftFront.setPower(0);
           rightRear.setPower(0);
           leftRear.setPower(0);
+        }
+        if (gamepad1.right_stick_x > 0.5) {
+          rightFront.setPower(0.75);
+          leftFront.setPower(-0.75);
+          rightRear.setPower(0.75);
+          leftRear.setPower(-0.75);
+        } else if (gamepad1.right_stick_x < -0.5) {
+          rightFront.setPower(-0.75);
+          leftFront.setPower(0.75);
+          rightRear.setPower(-0.75);
+          leftRear.setPower(0.75);
         }
         if (gamepad2.right_trigger > 0.1) {
           arm1.setPower(gamepad2.right_trigger);
