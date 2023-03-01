@@ -7,6 +7,9 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -24,7 +27,6 @@ public class Auto extends LinearOpMode
 {
     //INTRODUCE VARIABLES HERE
     OpenCvCamera camera;
-    public static double lt = 0.1;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
     static final double FEET_PER_METER = 3.28084;
@@ -96,9 +98,15 @@ public class Auto extends LinearOpMode
         final Trajectory to_pole2 = drive.trajectoryBuilder(to_pole1.end())
                 .strafeRight(0.6)
                 .build();
-        Trajectory start = drive.trajectoryBuilder(new Pose2d())
-                .strafeLeft(lt)
+        final Trajectory start = drive.trajectoryBuilder(new Pose2d())
+                .strafeLeft(0.2)
                 .build();
+
+        Servo left_servo = hardwareMap.get(Servo.class, "left");
+        Servo right_servo = hardwareMap.get(Servo.class, "right");
+        DcMotor arm1 = hardwareMap.get(DcMotor.class, "arm1");
+        DcMotor arm2 = hardwareMap.get(DcMotor.class, "arm2");
+        arm1.setDirection(DcMotorSimple.Direction.REVERSE);
         /*
          * The INIT-loop:
          * This REPLACES waitForStart!
@@ -172,17 +180,32 @@ public class Auto extends LinearOpMode
         }
 
         //PUT AUTO CODE HERE (DRIVER PRESSED THE PLAY BUTTON!)
+
+        left_servo.setPosition(0);
+        right_servo.setPosition(0.4);
+        sleep(200);
+
+        arm1.setPower(1);
+        arm2.setPower(1);
+        sleep(200);
+        arm1.setPower(0);
+        arm2.setPower(0);
+        sleep(100);
+
         drive.followTrajectory(start);
-        sleep(10);
+        sleep(100);
+
+        drive.followTrajectory(to_pole1);
+        sleep(100);
+
+        drive.followTrajectory(to_pole2);
         //default path
         if(this.tagOfInterest == null) {
-            drive.followTrajectory(to_pole1);
-            sleep(10);
-            drive.followTrajectory(to_pole2);
+
         }else switch (this.tagOfInterest.id) {
             case 1:
                 drive.followTrajectory(forward);
-                sleep(10);
+                sleep(100);
                 drive.followTrajectory(left);
                 break;
             case 2:
@@ -190,7 +213,7 @@ public class Auto extends LinearOpMode
                 break;
             case 3:
                 drive.followTrajectory(forward);
-                sleep(10);
+                sleep(100);
                 drive.followTrajectory(right);
                 break;
         }
