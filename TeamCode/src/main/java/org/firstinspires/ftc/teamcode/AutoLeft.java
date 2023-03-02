@@ -23,7 +23,7 @@ import java.util.ArrayList;
 
 @Autonomous
 @Config
-public class Auto extends LinearOpMode
+public class AutoLeft extends LinearOpMode
 {
     //INTRODUCE VARIABLES HERE
     OpenCvCamera camera;
@@ -64,7 +64,7 @@ public class Auto extends LinearOpMode
             @Override
             public void onOpened()
             {
-                Auto.this.camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
+                AutoLeft.this.camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -80,28 +80,30 @@ public class Auto extends LinearOpMode
         //HARDWARE MAPPING HERE etc.
         final SampleMecanumDrive drive = new SampleMecanumDrive(this.hardwareMap);
 
-        final Trajectory forward = drive.trajectoryBuilder(new Pose2d())
-                .forward(2.8)
-                .build();
         final Trajectory middle = drive.trajectoryBuilder(new Pose2d())
-                .forward(5)
+                .strafeLeft(0.5)
                 .build();
         final Trajectory left = drive.trajectoryBuilder(new Pose2d())
-                .strafeLeft(3.2)
+                .strafeLeft(4.2)
                 .build();
         final Trajectory right = drive.trajectoryBuilder(new Pose2d())
-                .strafeRight(3.2)
+                .strafeRight(0.8)
                 .build();
         final Trajectory to_pole1 = drive.trajectoryBuilder(new Pose2d())
-                .forward(1.5)
+                .forward(2)
                 .build();
         final Trajectory to_pole2 = drive.trajectoryBuilder(to_pole1.end())
                 .strafeRight(0.6)
                 .build();
+        final Trajectory to_pole3 = drive.trajectoryBuilder(to_pole2.end())
+                .forward(0.15)
+                .build();
         final Trajectory start = drive.trajectoryBuilder(new Pose2d())
                 .strafeLeft(0.2)
                 .build();
-
+        final Trajectory reset = drive.trajectoryBuilder(to_pole3.end())
+                .back(0.2)
+                .build();
         Servo left_servo = hardwareMap.get(Servo.class, "left");
         Servo right_servo = hardwareMap.get(Servo.class, "right");
         DcMotor arm1 = hardwareMap.get(DcMotor.class, "arm1");
@@ -183,37 +185,58 @@ public class Auto extends LinearOpMode
 
         left_servo.setPosition(0);
         right_servo.setPosition(0.4);
-        sleep(200);
+        sleep(1200);
 
         arm1.setPower(1);
         arm2.setPower(1);
         sleep(200);
         arm1.setPower(0);
         arm2.setPower(0);
-        sleep(100);
+        sleep(200);
 
         drive.followTrajectory(start);
-        sleep(100);
+        sleep(200);
 
         drive.followTrajectory(to_pole1);
-        sleep(100);
+        sleep(200);
 
         drive.followTrajectory(to_pole2);
+        sleep(200);
+
+        arm1.setPower(1);
+        arm2.setPower(1);
+        sleep(1200);
+        arm1.setPower(0);
+        arm2.setPower(0);
+        sleep(200);
+
+        drive.followTrajectory(to_pole3);
+        sleep(200);
+
+        left_servo.setPosition(0.4);
+        right_servo.setPosition(0);
+        sleep(1000);
+
+        drive.followTrajectory(reset);
+        sleep(200);
+
+        arm1.setPower(-1);
+        arm2.setPower(-1);
+        sleep(1000);
+        arm1.setPower(0);
+        arm2.setPower(0);
+        sleep(200);
         //default path
         if(this.tagOfInterest == null) {
-
+            drive.followTrajectory(middle);
         }else switch (this.tagOfInterest.id) {
             case 1:
-                drive.followTrajectory(forward);
-                sleep(100);
                 drive.followTrajectory(left);
                 break;
             case 2:
                 drive.followTrajectory(middle);
                 break;
             case 3:
-                drive.followTrajectory(forward);
-                sleep(100);
                 drive.followTrajectory(right);
                 break;
         }
@@ -225,9 +248,9 @@ public class Auto extends LinearOpMode
     void tagToTelemetry(final AprilTagDetection detection)
     {
         this.telemetry.addData("Detected tag ID: ", detection.id);
-        this.telemetry.addData("Translation X: ", detection.pose.x* Auto.FEET_PER_METER);
-        this.telemetry.addData("Translation Y: ", detection.pose.y* Auto.FEET_PER_METER);
-        this.telemetry.addData("Translation Z: ", detection.pose.z* Auto.FEET_PER_METER);
+        this.telemetry.addData("Translation X: ", detection.pose.x* AutoLeft.FEET_PER_METER);
+        this.telemetry.addData("Translation Y: ", detection.pose.y* AutoLeft.FEET_PER_METER);
+        this.telemetry.addData("Translation Z: ", detection.pose.z* AutoLeft.FEET_PER_METER);
         this.telemetry.addData("Rotation Yaw: ", Math.toDegrees(detection.pose.yaw));
         this.telemetry.addData("Rotation Pitch: ", Math.toDegrees(detection.pose.pitch));
         this.telemetry.addData("Rotation Roll: ", Math.toDegrees(detection.pose.roll));
