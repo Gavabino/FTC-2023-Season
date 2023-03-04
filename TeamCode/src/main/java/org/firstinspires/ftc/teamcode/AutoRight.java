@@ -23,7 +23,7 @@ import java.util.ArrayList;
 
 @Autonomous(preselectTeleOp = "Main")
 @Config
-public class AutoLeft extends LinearOpMode
+public class AutoRight extends LinearOpMode
 {
     //INTRODUCE VARIABLES HERE
     OpenCvCamera camera;
@@ -61,11 +61,10 @@ public class AutoLeft extends LinearOpMode
         this.camera.setPipeline(this.aprilTagDetectionPipeline);
         this.camera.openCameraDeviceAsync(new AsyncCameraOpenListener()
         {
-
             @Override
             public void onOpened()
             {
-                AutoLeft.this.camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
+                AutoRight.this.camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -82,25 +81,25 @@ public class AutoLeft extends LinearOpMode
         final SampleMecanumDrive drive = new SampleMecanumDrive(this.hardwareMap);
 
         final Trajectory middle = drive.trajectoryBuilder(new Pose2d())
-                .strafeLeft(0.5)
-                .build();
-        final Trajectory left = drive.trajectoryBuilder(new Pose2d())
-                .strafeLeft(4.2)
+                .strafeRight(0.7)
                 .build();
         final Trajectory right = drive.trajectoryBuilder(new Pose2d())
-                .strafeRight(0.8)
+                .strafeRight(4.2)
+                .build();
+        final Trajectory left = drive.trajectoryBuilder(new Pose2d())
+                .strafeLeft(0.8)
                 .build();
         final Trajectory to_pole1 = drive.trajectoryBuilder(new Pose2d())
-                .forward(2)
+                .forward(1.8)
                 .build();
         final Trajectory to_pole2 = drive.trajectoryBuilder(to_pole1.end())
-                .strafeRight(0.6)
+                .strafeLeft(0.6)
                 .build();
         final Trajectory to_pole3 = drive.trajectoryBuilder(to_pole2.end())
-                .forward(0.15)
+                .forward(0.17)
                 .build();
         final Trajectory start = drive.trajectoryBuilder(new Pose2d())
-                .strafeLeft(0.2)
+                .strafeRight(0.2)
                 .build();
         final Trajectory reset = drive.trajectoryBuilder(to_pole3.end())
                 .back(0.2)
@@ -249,9 +248,9 @@ public class AutoLeft extends LinearOpMode
     void tagToTelemetry(final AprilTagDetection detection)
     {
         this.telemetry.addData("Detected tag ID: ", detection.id);
-        this.telemetry.addData("Translation X: ", detection.pose.x* AutoLeft.FEET_PER_METER);
-        this.telemetry.addData("Translation Y: ", detection.pose.y* AutoLeft.FEET_PER_METER);
-        this.telemetry.addData("Translation Z: ", detection.pose.z* AutoLeft.FEET_PER_METER);
+        this.telemetry.addData("Translation X: ", detection.pose.x* AutoRight.FEET_PER_METER);
+        this.telemetry.addData("Translation Y: ", detection.pose.y* AutoRight.FEET_PER_METER);
+        this.telemetry.addData("Translation Z: ", detection.pose.z* AutoRight.FEET_PER_METER);
         this.telemetry.addData("Rotation Yaw: ", Math.toDegrees(detection.pose.yaw));
         this.telemetry.addData("Rotation Pitch: ", Math.toDegrees(detection.pose.pitch));
         this.telemetry.addData("Rotation Roll: ", Math.toDegrees(detection.pose.roll));

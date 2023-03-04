@@ -40,8 +40,8 @@ public class Main extends LinearOpMode {
     if (opModeIsActive()) {
       // Put run blocks here.
       while (opModeIsActive()) {
-        telemetry.addLine(String.format("\nArm 1 Position: %d", arm1.getCurrentPosition()));
-        telemetry.addLine(String.format("\nArm 2 Position: %d", arm2.getCurrentPosition()));
+        telemetry.addData("Arm 1 Position: ", arm1.getCurrentPosition());
+        telemetry.addData("Arm 2 Position: ", arm2.getCurrentPosition());
         if (gamepad2.x) {
           left.setPosition(0);
           right.setPosition(0.4);
@@ -106,15 +106,15 @@ public class Main extends LinearOpMode {
           leftRear.setPower(0);
         }
         if (gamepad1.right_stick_x > 0.5) {
-          rightFront.setPower(0.75);
-          leftFront.setPower(-0.75);
-          rightRear.setPower(0.75);
-          leftRear.setPower(-0.75);
+          rightFront.setPower(1);
+          leftFront.setPower(-1);
+          rightRear.setPower(1);
+          leftRear.setPower(-1);
         } else if (gamepad1.right_stick_x < -0.5) {
-          rightFront.setPower(-0.75);
-          leftFront.setPower(0.75);
-          rightRear.setPower(-0.75);
-          leftRear.setPower(0.75);
+          rightFront.setPower(-1);
+          leftFront.setPower(1);
+          rightRear.setPower(-1);
+          leftRear.setPower(1);
         }
         if (gamepad2.right_trigger > 0.1) {
           arm1.setPower(gamepad2.right_trigger);
